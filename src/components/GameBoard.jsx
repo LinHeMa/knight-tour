@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./gameBoard.css";
 import { getSolution } from "../utils/getAvaliableMove";
+import sleep from "../utils/sleep";
 
 const createBoard = (size) => {
   return Array(parseInt(size, 10))
@@ -9,21 +10,28 @@ const createBoard = (size) => {
 };
 
 export default function GameBoard() {
-  const [boardSize, setBoardSize] = useState(5);
+  const INIT_POSITION = [0, 0];
+  const [boardSize, setBoardSize] = useState(7);
   const [boardState, setBoardState] = useState(() => createBoard(boardSize));
-  const [steps, setSteps] = useState(1);
-  console.log(getSolution([0, 0], 5, boardState));
-  const solution = getSolution([0, 0], 5, boardState);
+  const [currentBox, setCurrentBox] = useState([0, 0]);
+  const solution = getSolution(INIT_POSITION, boardSize, boardState);
+
   useEffect(() => {
-    for (const index of solution) {
-      const [x, y] = index;
-      setBoardState((prev) => {
-        const newBoard = prev.map((row) => [...row]);
-        newBoard[x][y] = solution.indexOf(index) + 1;
-        return newBoard;
-      });
+    async function paint() {
+      for (const index of solution) {
+        const [x, y] = index;
+        await sleep(300);
+        setBoardState((prev) => {
+          const newBoard = prev.map((row) => [...row]);
+          newBoard[x][y] = solution.indexOf(index) + 1;
+          return newBoard;
+        });
+        setCurrentBox([x, y]);
+      }
     }
+    paint();
   }, []);
+
   return (
     <div>
       <label>
@@ -44,17 +52,11 @@ export default function GameBoard() {
           {boardState.map((rowBoxes, rowIndex) => {
             return rowBoxes.map((eachBox, colIndex) => (
               <div
-                onClick={(e) => {
-                  const position = e.target.id.split(",").map(Number);
-                  setBoardState((prev) => {
-                    const newBoard = prev.map((row) => [...row]);
-                    newBoard[position[0]][position[1]] = steps;
-                    return newBoard;
-                  });
-                  setSteps((prev) => (prev += 1));
-                }}
                 id={[rowIndex, colIndex]}
-                className="board-box"
+                className={`
+                  board-box
+                  ${currentBox[0] === rowIndex && currentBox[1] === colIndex ? "active" : ""}
+                  ${boardState[rowIndex][colIndex] && "has-value"}`}
                 key={rowIndex + colIndex}
               >
                 {eachBox}
