@@ -39,7 +39,7 @@ export function getAvailableMoves(position, size, boardState) {
 }
 
 // Converts a path to a string for storage in the Set
-function pathToString(path) {
+export function pathToString(path) {
   return path.map((pos) => pos.join(",")).join("|");
 }
 
