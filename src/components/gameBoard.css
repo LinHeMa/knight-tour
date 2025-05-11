@@ -40,10 +40,10 @@
     .path-line {
         position: absolute;
         height: 3px;
-        background: linear-gradient(90deg, rgba(120,167,114,0.7) 0%, rgba(255,82,82,0.7) 100%);
+        background: red;
         transform-origin: 0 50%;
-        z-index: 1;
-        box-shadow: 0 0 8px rgba(120,167,114,0.5);
+        z-index: 5;
+        box-shadow: 0 0 8px rgba(255,82,82,0.5);
         opacity: 0;
         transition: opacity 0.5s ease;
     }
@@ -105,4 +105,19 @@
 
 .start-button:hover {
     background-color: #357abD;
+}
+
+.reset-button {
+    background-color: #e2e2e2;
+    color: #555;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.reset-button:hover {
+    background-color: #d2d2d2;
 }

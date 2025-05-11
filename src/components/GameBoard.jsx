@@ -28,8 +28,9 @@ export default function GameBoard() {
   );
   const [currentBox, setCurrentBox] = useState([0, 0]);
   const [startSolveIndex, setStartSolveIndex] = useState(null);
-  const [pathLines, setPathLines] = useState([]);
+  const [pathLinesMap, setPathLinesMap] = useState({});
   const boardRefs = useRef(Array(MAX_SOLUTIONS).fill().map(() => React.createRef()));
+  const [visualizedSolutions, setVisualizedSolutions] = useState([]);
 
   // useMemo to avoid extra calculation
   const solutions = useMemo(
@@ -64,24 +65,53 @@ export default function GameBoard() {
     line.style.top = `${fromY}px`;
     line.style.transform = `rotate(${angle}deg)`;
     
-    // Add to board and track
+    // Add to board
     boardElement.appendChild(line);
-    setPathLines(prev => [...prev, line]);
+    
+    // Keep track of lines per solution
+    setPathLinesMap(prev => {
+      const solutionLines = prev[boardIndex] || [];
+      return {
+        ...prev,
+        [boardIndex]: [...solutionLines, line]
+      };
+    });
     
     // Make it visible after a small delay for animation
     setTimeout(() => {
       line.classList.add('visible');
     }, 50);
+    
+    return line;
   };
   
-  // Clear all path lines
-  const clearPathLines = () => {
-    pathLines.forEach(line => {
+  // Clear path lines for a specific solution
+  const clearPathLinesForSolution = (solutionIndex) => {
+    const lines = pathLinesMap[solutionIndex] || [];
+    lines.forEach(line => {
       if (line && line.parentNode) {
         line.parentNode.removeChild(line);
       }
     });
-    setPathLines([]);
+    
+    setPathLinesMap(prev => {
+      const newMap = {...prev};
+      delete newMap[solutionIndex];
+      return newMap;
+    });
+  };
+  
+  // Clear all path lines (e.g., when changing board size)
+  const clearAllPathLines = () => {
+    Object.values(pathLinesMap).forEach(lines => {
+      lines.forEach(line => {
+        if (line && line.parentNode) {
+          line.parentNode.removeChild(line);
+        }
+      });
+    });
+    setPathLinesMap({});
+    setVisualizedSolutions([]);
   };
 
   useEffect(() => {
@@ -102,8 +132,8 @@ export default function GameBoard() {
         return newBoards;
       });
       
-      // Clear any existing path lines
-      clearPathLines();
+      // Only clear path lines for the current solution
+      clearPathLinesForSolution(startSolveIndex);
 
       // Paint each step of the solution
       let prevPosition = null;
@@ -132,6 +162,14 @@ export default function GameBoard() {
         prevPosition = [x, y];
       }
       
+      // Add this solution to visualized solutions
+      setVisualizedSolutions(prev => {
+        if (!prev.includes(startSolveIndex)) {
+          return [...prev, startSolveIndex];
+        }
+        return prev;
+      });
+      
       // Wait for animations to finish
       await sleep(1000);
       setStartSolveIndex(null);
@@ -156,7 +194,7 @@ export default function GameBoard() {
               setBoardState(createBoard(MAX_SOLUTIONS, newSize));
               setCurrentBox([0, 0]);
               setStartSolveIndex(null);
-              clearPathLines();
+              clearAllPathLines();
             }}
             style={{ marginLeft: '10px', padding: '5px' }}
           >
@@ -174,13 +212,34 @@ export default function GameBoard() {
             <div key={pathToString(solution || [])} className="solution-container">
               <div className="solution-header">
                 <h2>Solution {index + 1}</h2>
-                <button 
-                  className="start-button"
-                  onClick={() => setStartSolveIndex(index)}
-                  disabled={startSolveIndex !== null}
-                >
-                  Visualize Path
-                </button>
+                <div>
+                  {visualizedSolutions.includes(index) && (
+                    <button
+                      className="reset-button"
+                      onClick={() => {
+                        clearPathLinesForSolution(index);
+                        setBoardState(prev => {
+                          const newBoards = [...prev];
+                          newBoards[index] = Array(boardSize)
+                            .fill()
+                            .map(() => Array(boardSize).fill(null));
+                          return newBoards;
+                        });
+                        setVisualizedSolutions(prev => prev.filter(i => i !== index));
+                      }}
+                      style={{ marginRight: '10px' }}
+                    >
+                      Reset
+                    </button>
+                  )}
+                  <button 
+                    className="start-button"
+                    onClick={() => setStartSolveIndex(index)}
+                    disabled={startSolveIndex !== null}
+                  >
+                    Visualize Path
+                  </button>
+                </div>
               </div>
               <div
                 ref={boardRefs.current[index]}
