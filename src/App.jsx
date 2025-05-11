@@ -3,12 +3,12 @@ import GameBoard from "./components/GameBoard";
 
 function App() {
   return (
-    <>
-      <h1>knights tour</h1>
+    <div className="app-wrapper">
+      <h1>Knight's Tour</h1>
       <section>
         <GameBoard />
       </section>
-    </>
+    </div>
   );
 }
 
