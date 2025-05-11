@@ -1,7 +1,5 @@
 .board-box-wrapper {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(7, 1fr);
 
     .board-box {
         width: 50px;
@@ -10,12 +8,28 @@
     }
 
     .board-box.active {
-        background-color: red;
+        background-color: #7f0019;
         transition: background-color 0.5s ease;
     }
 
     .has-value {
-        background-color: green;
+        background-color: #9aa27c;
         transition: background-color 0.5s ease;
     }
+}
+.board-box-wrapper.ten-grid {
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+}
+.board-box-wrapper.seven-grid {
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+}
+.board-box-wrapper.six-grid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+}
+.board-box-wrapper.five-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
 }
