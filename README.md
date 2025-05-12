@@ -1,12 +1,39 @@
-# React + Vite
+# Knight's Tour
+## GH page
+link: https://linhema.github.io/knight-tour/
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Purpose
+The Devil's Plan (Korean: 데블스 플랜) shows an interesting game called Knight's Tour. I was wondering if I could solve it.
+After solving it, I found it had some patterns, so I tried to use my frontend skills to visualize them.
 
-Currently, two official plugins are available:
+## Related Knowladge
+### Chess
+In chess, the knight moves in an L-shape pattern:
+- Two squares in one direction (horizontal or vertical)
+- Then one square perpendicular to the first direction
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This creates a unique movement pattern where the knight:
+- Can jump over other pieces
+- Always lands on a square of the opposite color from its starting position
+- Has up to 8 possible moves from any position on the board
 
-## Expanding the ESLint configuration
+Example of knight's possible moves from center position:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+    2 _ 3 _ 4
+    _ _ _ _ _
+    5 _ K _ 6
+    _ _ _ _ _
+    7 _ 8 _ 1
+
+K = Knight's position
+1-8 = Possible moves
+_ = Empty squares
+
+Each number represents a possible landing position for the knight from its current position (K).
+
+### Warnsdorf's rule
+When I was using pen and paper, I solved 5*5 Knight's Tour problem in Warnsdorf's rule.
+Warnsdorf's rule is a heuristic for finding a single knight's tour. The knight is moved so that it always proceeds to the square from which the knight will have the fewest onward moves. When calculating the number of onward moves for each candidate square, we do not count moves that revisit any square already visited. It is possible to have two or more choices for which the number of onward moves is equal; there are various methods for breaking such ties, including one devised by Pohl and another by Squirrel and Cull.
+
+### Divide and Conquer
+Writing this file, I found this problem can be solved in divide and conquer methods.I haven't tried it yet.
