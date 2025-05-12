@@ -1,5 +1,6 @@
 {
   "name": "knights-tour",
+  "homepage": "https://linhema.github.io/knight-tour",
   "private": true,
   "version": "0.0.0",
   "type": "module",
